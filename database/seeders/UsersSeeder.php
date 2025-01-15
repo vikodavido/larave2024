@@ -12,6 +12,11 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        DB::table('users')->truncate();
+
+        User::factory()->admin()->create();
+        User::factory(5)->create();
+        User::factory()->moderator()->create();
+
     }
 }
