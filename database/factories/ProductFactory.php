@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
@@ -30,5 +31,29 @@ class ProductFactory extends Factory
         'thumbnail' => 'tast'
        ];
 
+    }
+    protected function generateImage(string $slug): string
+    {
+        $dirName = "faker/products/$slug";
+        $faker = \Faker\Factory::create();
+        $faker->addProvider(new \Smknstd\FakerPicsumImages\FakerPicsumImagesProvider($faker));
+
+        ds($dirName)->label('dir name');
+
+
+        if(! Storage::exists($dirName)) {
+            Storage::createDirectory($dirName);
+        }
+
+        ds(Storage::path($dirName))->label('dir full path');
+        /**
+         * @var \Smknstd\FakerPicsumImages\FakerPicsumImagesProvider $faker
+         */
+        
+        
+        return $dirName . '/' . $faker->image(
+            dir: Storage::path($dirName),
+            isFullPath: false,
+        );
     }
 }
