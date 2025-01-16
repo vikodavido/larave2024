@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CategoriesAndProductsSeeder extends Seeder
 {
@@ -12,6 +14,17 @@ class CategoriesAndProductsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+
+        DB::table('category_product')->truncate(); 
+        DB::table('products')->truncate();
+        DB::table('categories')->truncate();
+
+        Storage::deleteDirectory('faker');
+
+        Category::factory(2)->create();
+        Category::factory(5)->hasProducts(3)->create();
+
+        Category::factory(2)->withParent()->create();
+        Category::factory(2)->withParent()->hasProducts(2)->create();
     }
 }
