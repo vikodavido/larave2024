@@ -1,12 +1,11 @@
 <?php
 namespace Database\Seeders;
-
+use App\Enums\RoleEnum;
 use App\Enums\Permissions\AccountEnum;
 use App\Enums\Permissions\CategoryEnum;
 use App\Enums\Permissions\OrderEnum;
 use App\Enums\Permissions\ProductEnum;
 use App\Enums\Permissions\UserEnum;
-use App\Enums\RoleEnum;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;

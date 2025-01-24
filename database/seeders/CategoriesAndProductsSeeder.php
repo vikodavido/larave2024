@@ -14,6 +14,7 @@ class CategoriesAndProductsSeeder extends Seeder
      */
     public function run(): void
     {
+        // DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
         DB::table('category_product')->truncate(); 
         DB::table('products')->truncate();
@@ -26,5 +27,7 @@ class CategoriesAndProductsSeeder extends Seeder
 
         Category::factory(2)->withParent()->create();
         Category::factory(2)->withParent()->hasProducts(2)->create();
+        
+        // DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 }

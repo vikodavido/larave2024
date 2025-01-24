@@ -5,6 +5,8 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Enums\RoleEnum; 
+use App\Models\User;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -14,7 +16,7 @@ class UserFactory extends Factory
     /**
      * The current password being used by the factory.
      */
-    protected static ?string $password;
+    protected static ?string $password = null;
 
     /**
      * Define the model's default state.
@@ -28,7 +30,7 @@ class UserFactory extends Factory
             'lastname' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->unique()->e164PhoneNumber(),
-            'birthday' => fake()->dateTimeBetween('-70 years' , '-18 years')
+            'birthday' => fake()->dateTimeBetween('-70 years', '-18 years')
                 ->format('Y-m-d'),
             'email_verified_at' => now(),
             'password' => Hash::make(static::$password ??= 'qwerty'),
@@ -36,35 +38,49 @@ class UserFactory extends Factory
         ];
     }
 
-    public function confiqure()
+    /**
+     * Configure the factory.
+     */
+    public function configure(): static
     {
-        return $this->afterCreating(function($user) {
-            if(! $user->hasAnyRole(RoleEnum::values())) {
+        return $this->afterCreating(function ($user) {
+            if (! $user->hasAnyRole(RoleEnum::values())) {
                 $user->assignRole(RoleEnum::CUSTOMER->value);
             }
         });
     }
-    public function adnin(): static 
+
+    /**
+     * Admin state.
+     */
+    public function admin(): static
     {
         return $this->state(fn ($attributes) => [
             'email' => 'admin@admin.com',
-
         ])->afterCreating(function ($user) {
             $user->syncRoles([RoleEnum::ADMIN->value]);
         });
     }
-    public function moderator(): static 
+
+    /**
+     * Moderator state.
+     */
+    public function moderator(): static
     {
         return $this->state(fn ($attributes) => [
-            'email' => 'admin@admin.com'
+            'email' => 'moderator@admin.com', 
         ])->afterCreating(function ($user) {
             $user->syncRoles([RoleEnum::MODERATOR->value]);
         });
     }
-    public function withEmail(string $email): static 
+
+    /**
+     * State for custom email.
+     */
+    public function withEmail(string $email): static
     {
         return $this->state(fn ($attributes) => [
-            'email' => $email
+            'email' => $email,
         ]);
     }
 }
