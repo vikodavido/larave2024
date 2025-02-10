@@ -2,19 +2,20 @@
 
 namespace App\Http\Requests\Admin\Categories;
 
+use App\Enums\Permissions\CategoryEnum;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Enums\Permissions\CategoryEnum; 
+use Illuminate\Validation\Rule;
 
-class CreateRequest extends FormRequest
+class EditRequest extends FormRequest
 {
+    protected $redirectRoute = 'admin.categories.edit';
+
     /**
      * Determine if the user is authorized to make this request.
      */
-    protected $redirectRoute = 'admin.categories.create';
-
     public function authorize(): bool
     {
-        return auth()->user()?->can(CategoryEnum::PUBLISH->value);
+        return auth()->user()?->can(CategoryEnum::EDIT->value);
     }
 
     /**
@@ -24,9 +25,11 @@ class CreateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('category')->id;
+
         return [
-            'name'=> ['required', 'string', 'min:2', 'max:255', 'unique:categories,name'],
-            'parent_id' => ['nullable', 'numeric', 'exists:categories,id']
+            'name' => ['required', 'string', 'min:2', 'max:255', Rule::unique('categories', 'name')->ignore($id)],
+            'parent_id' => ['nullable', 'numeric', 'exists:categories,id'],
         ];
     }
 }
