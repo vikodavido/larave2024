@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests\Admin\Categories;
 
+use App\Enums\Permissions\CategoryEnum;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Enums\Permissions\CategoryEnum; 
 
 class CreateRequest extends FormRequest
 {
+    protected $redirectRoute = 'admin.categories.create';
+
     /**
      * Determine if the user is authorized to make this request.
      */
-    protected $redirectRoute = 'admin.categories.create';
-
     public function authorize(): bool
     {
         return auth()->user()?->can(CategoryEnum::PUBLISH->value);
@@ -25,8 +25,8 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=> ['required', 'string', 'min:2', 'max:255', 'unique:categories,name'],
-            'parent_id' => ['nullable', 'numeric', 'exists:categories,id']
+            'name' => ['required', 'string', 'min:2', 'max:255', 'unique:categories,name'],
+            'parent_id' => ['nullable', 'numeric', 'exists:categories,id'],
         ];
     }
 }
