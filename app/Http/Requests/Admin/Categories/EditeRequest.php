@@ -25,6 +25,7 @@ class EditRequest extends FormRequest
      */
     public function rules(): array
     {
+        // PUT: admin/categories/5
         $id = $this->route('category')->id;
 
         return [

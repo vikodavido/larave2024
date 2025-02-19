@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Observers\ProductObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,14 +14,23 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+#[ObservedBy([ProductObserver::class])]
 class Product extends Model
 {
-	public function categories(): BelongsToMany
+    use HasFactory;
+
+    protected $guarded = [];
+
+    public function images(): MorphMany
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
     }
 
-    // $product->thumbnailUrl
     public function thumbnailUrl(): Attribute
     {
         return Attribute::get(function () {
@@ -27,25 +38,19 @@ class Product extends Model
         });
     }
 
-    public function thumbnail(): Attribute
+    public function setThumbnailAttribute(UploadedFile $file): void
     {
-        return Attribute::set(function ($file) {
-            if (is_string($file)) {
-                return $file;
-            }
+        if (!empty($this->attributes['thumbnail'])) {
+            Storage::delete($this->attributes['thumbnail']);
+        }
 
-            if (!$file instanceof UploadedFile) {
-                throw new \InvalidArgumentException('Thumbnail must be an instance of UploadedFile or a string.');
-            }
+        $fileName = Str::slug(microtime());
+        $filePath = 'products/' . $this->attributes['slug'] . "/$fileName" . $file->getClientOriginalName();
 
-            $fileName = Str::slug(microtime());
-            $filePath = 'products/' . $this->attributes['slug'] . "/$fileName" . $file->getClientOriginalName();
+        Storage::put($filePath, File::get($file));
+        Storage::setVisibility($filePath, 'public');
 
-            Storage::put($filePath, File::get($file));
-            Storage::setVisibility($filePath, 'public');
-
-            return $filePath;
-        });
+        $this->attributes['thumbnail'] = $filePath;
     }
 
     public function imagesFolderPath(): string

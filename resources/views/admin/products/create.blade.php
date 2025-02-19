@@ -175,3 +175,7 @@
         </div>
     </div>
 @endsection
+
+@push('footer-js')
+    @vite(['resources/js/admin/products.js'])
+@endpush
