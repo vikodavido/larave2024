@@ -29,6 +29,19 @@
                         @each('categories.parts.label', $product->categories, 'category')
                     </div>
                 </div>
+                <div class="row mt-5">
+                    <div class="col-12 col-sm-6"></div>
+                    <div class="col-12 col-sm-6">
+                        <div class="card">
+                            <form method="POST" action="{{ route('cart.add', $product) }}"
+                                  class="card-body d-flex align-items-center justify-content-between">
+                                @csrf
+                                <div class="card-title">Price: <strong class="fs-5">{{ $product->finalPrice }} $</strong></div>
+                                <button type="submit" class="btn btn-outline-success">Buy</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-12 mt-3">
                 <hr>
