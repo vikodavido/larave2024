@@ -4,13 +4,17 @@
              alt="{{ $product->title }}">
         <div class="card-body">
             <h5 class="card-title">{{ $product->title }}</h5>
-                <div class="row">
-                    <div class="col-12 col-sm-6">Price:</div>
-                    <div class="col-12 col-sm-6">{{ $product->finalPrice }} $</div>
-                </div>
+            <div class="row">
+                <div class="col-12 col-sm-6">Price:</div>
+                <div class="col-12 col-sm-6">{{ $product->finalPrice }} $</div>
+            </div>
         </div>
         <div class="card-footer">
-            <a href="{{ route('products.show', $product) }}" class="btn btn-outline-info my-2">Show</a>
+            <div class="btn-group btn-group-sm gap-1 w-100 d-flex align-items-center justify-content-between"
+                 role="group">
+                <a href="{{ route('products.show', $product) }}" class="btn btn-outline-info my-2">Show</a>
+                <button class="btn btn-outline-success product-card-buy" data-action="{{ route('ajax.cart.add', $product) }}">Buy</button>
+            </div>
         </div>
     </div>
 </div>
